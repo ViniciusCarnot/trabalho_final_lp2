@@ -1,17 +1,45 @@
 package entities;
 
 import java.time.LocalDate;
+import java.util.Objects;
+
+import exceptions.DataDisciplinaExcessao;
 
 public class Disciplina {
+	
     private Integer numero;
     private String nome;
     private LocalDate dataInicio;
     private LocalDate dataEncerramento;
+    
+    private Professor professor;
+    
+    private Curso curso;
 
     public Disciplina() {
     }
+    
+    public Disciplina(Integer numero, String nome, LocalDate dataInicio, LocalDate dataEncerramento, Curso curso) {
+		this.numero = numero;
+		this.nome = nome;
+		this.dataInicio = dataInicio;
+		this.dataEncerramento = dataEncerramento;
+		this.curso = curso;
+		validarData(dataInicio, dataEncerramento);
+	}
 
-    public Integer getNumero() {
+	public Disciplina(Integer numero, String nome, LocalDate dataInicio, LocalDate dataEncerramento,
+			Professor professor, Curso curso) {
+		this.numero = numero;
+		this.nome = nome;
+		this.dataInicio = dataInicio;
+		this.dataEncerramento = dataEncerramento;
+		this.professor = professor;
+		this.curso = curso;
+		validarData(dataInicio, dataEncerramento);
+	}
+
+	public Integer getNumero() {
         return numero;
     }
     public void setNumero(Integer numero) {
@@ -36,12 +64,46 @@ public class Disciplina {
         this.dataEncerramento = dataEncerramento;
     }
 
-    public Boolean validarData(){
+    public Professor getProfessor() {
+		return professor;
+	}
+
+	public void setProfessor(Professor professor) {
+		this.professor = professor;
+	}
+
+	public Curso getCurso() {
+		return curso;
+	}
+
+	public void setCurso(Curso curso) {
+		this.curso = curso;
+	}
+
+	public void validarData(LocalDate dataInicio, LocalDate dataEncerramento){
         if(dataInicio.isAfter(dataEncerramento))
         {
-            return false;
+            throw new DataDisciplinaExcessao("Erro: Data de início é anterior a data de encerramento.");
         }
-        return true;
     }
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(numero);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Disciplina other = (Disciplina) obj;
+		return Objects.equals(numero, other.numero);
+	}
+	
+	
     
 }
