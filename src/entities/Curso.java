@@ -9,6 +9,7 @@ import exceptions.DataDisciplinaExcessao;
 
 public class Curso {
 	
+	private Integer id;
 	private String codigo;
 	private String nome;
 	private String descricao;
@@ -20,14 +21,23 @@ public class Curso {
 	public Curso() {
 	}
 
-	public Curso(String codigo, String nome, String descricao, LocalDate dataInicio,
+	public Curso(Integer id, String codigo, String nome, String descricao, LocalDate dataInicio,
 			LocalDate dataEncerramentoPrevista) {
+		this.id = id;
 		this.codigo = codigo;
 		this.nome = nome;
 		this.descricao = descricao;
 		this.dataInicio = dataInicio;
 		this.dataEncerramentoPrevista = dataEncerramentoPrevista;
 		validarData(dataInicio, dataEncerramentoPrevista);
+	}
+	
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public String getCodigo() {
@@ -83,7 +93,7 @@ public class Curso {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(codigo);
+		return Objects.hash(codigo, id);
 	}
 
 	@Override
@@ -95,7 +105,7 @@ public class Curso {
 		if (getClass() != obj.getClass())
 			return false;
 		Curso other = (Curso) obj;
-		return Objects.equals(codigo, other.codigo);
+		return Objects.equals(codigo, other.codigo) && Objects.equals(id, other.id);
 	}
-	
+
 }

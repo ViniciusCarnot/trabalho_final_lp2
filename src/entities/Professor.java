@@ -7,6 +7,7 @@ import java.util.Set;
 
 public class Professor {
 	
+	private Integer id;
 	private String codigoFuncional;
 	private String nome;
 	private LocalDate dataNascimento;
@@ -16,10 +17,19 @@ public class Professor {
 	public Professor() {
 	}
 
-	public Professor(String codigoFuncional, String nome, LocalDate dataNascimento) {
+	public Professor(Integer id, String codigoFuncional, String nome, LocalDate dataNascimento) {
+		this.id = id;
 		this.codigoFuncional = codigoFuncional;
 		this.nome = nome;
 		this.dataNascimento = dataNascimento;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public String getCodigoFuncional() {
@@ -52,7 +62,7 @@ public class Professor {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(codigoFuncional);
+		return Objects.hash(codigoFuncional, id);
 	}
 
 	@Override
@@ -64,7 +74,9 @@ public class Professor {
 		if (getClass() != obj.getClass())
 			return false;
 		Professor other = (Professor) obj;
-		return Objects.equals(codigoFuncional, other.codigoFuncional);
+		return Objects.equals(codigoFuncional, other.codigoFuncional) && Objects.equals(id, other.id);
 	}
+
+	
 
 }
