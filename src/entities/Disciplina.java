@@ -7,6 +7,7 @@ import exceptions.DataDisciplinaExcessao;
 
 public class Disciplina {
 	
+	private Integer id;
     private Integer numero;
     private String nome;
     private LocalDate dataInicio;
@@ -19,7 +20,8 @@ public class Disciplina {
     public Disciplina() {
     }
     
-    public Disciplina(Integer numero, String nome, LocalDate dataInicio, LocalDate dataEncerramento, Curso curso) {
+    public Disciplina(Integer id, Integer numero, String nome, LocalDate dataInicio, LocalDate dataEncerramento, Curso curso) {
+    	this.id = id;
 		this.numero = numero;
 		this.nome = nome;
 		this.dataInicio = dataInicio;
@@ -28,8 +30,9 @@ public class Disciplina {
 		validarData(dataInicio, dataEncerramento);
 	}
 
-	public Disciplina(Integer numero, String nome, LocalDate dataInicio, LocalDate dataEncerramento,
+	public Disciplina(Integer id, Integer numero, String nome, LocalDate dataInicio, LocalDate dataEncerramento,
 			Professor professor, Curso curso) {
+		this.id = id;
 		this.numero = numero;
 		this.nome = nome;
 		this.dataInicio = dataInicio;
@@ -37,6 +40,14 @@ public class Disciplina {
 		this.professor = professor;
 		this.curso = curso;
 		validarData(dataInicio, dataEncerramento);
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public Integer getNumero() {
@@ -89,7 +100,7 @@ public class Disciplina {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(numero);
+		return Objects.hash(id, numero);
 	}
 
 	@Override
@@ -101,9 +112,7 @@ public class Disciplina {
 		if (getClass() != obj.getClass())
 			return false;
 		Disciplina other = (Disciplina) obj;
-		return Objects.equals(numero, other.numero);
+		return Objects.equals(id, other.id) && Objects.equals(numero, other.numero);
 	}
-	
-	
-    
+
 }
