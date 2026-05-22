@@ -90,6 +90,12 @@ public class Curso {
             throw new DataDisciplinaExcessao("Erro: Data de início é anterior a data de encerramento.");
         }
     }
+	
+	@Override
+	public String toString() {
+		return "Curso [id=" + id + ", codigo=" + codigo + ", nome=" + nome + ", descricao=" + descricao
+				+ ", dataInicio=" + dataInicio + ", dataEncerramentoPrevista=" + dataEncerramentoPrevista + "]";
+	}
 
 	@Override
 	public int hashCode() {

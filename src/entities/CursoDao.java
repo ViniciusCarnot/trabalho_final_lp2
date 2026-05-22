@@ -11,33 +11,35 @@ import java.util.List;
 
 import exceptions.DbExcessao;
 
-public class ProfessorDao implements IFuncoesCrud<Professor> {
+public class CursoDao implements IFuncoesCrud<Curso> {
 	
 	private Connection conn;
 	
-	public ProfessorDao(Connection conn) {
+	public CursoDao(Connection conn) {
 		this.conn = conn;
 	}
 	
-	public ProfessorDao() {
+	public CursoDao() {
 		this.conn = DB.getConnection();
 	}
 
 	@Override
-	public void inserir(Professor professor) {
-
+	public void inserir(Curso curso) {
+		
 		PreparedStatement ps = null;
 		
 		try {
-			ps = conn.prepareStatement("INSERT INTO professor "
-					+ "(codigoFuncional, nome, dataNascimento) "
+			ps = conn.prepareStatement("INSERT INTO curso "
+					+ "(codigo, nome, descricao, dataInicio, dataEncerramentoPrevista) "
 					+ "values "
-					+ "(?, ?, ?)" ,
+					+ "(?, ?, ?, ?, ?)" ,
 					Statement.RETURN_GENERATED_KEYS);
 			
-			ps.setString(1, professor.getCodigoFuncional());
-			ps.setString(2, professor.getNome());
-			ps.setObject(3, professor.getDataNascimento());
+			ps.setString(1, curso.getCodigo());
+			ps.setString(2, curso.getNome());
+			ps.setString(3, curso.getDescricao());
+			ps.setObject(4, curso.getDataInicio());
+			ps.setObject(5, curso.getDataEncerramentoPrevista());
 			
 			int rowsAffected = ps.executeUpdate();
 			
@@ -48,7 +50,7 @@ public class ProfessorDao implements IFuncoesCrud<Professor> {
 				if(rs.next()) {
 					
 					int id = rs.getInt(1);
-					professor.setId(id);
+					curso.setId(id);
 				}
 				
 				DB.closeResultSet(rs);
@@ -62,7 +64,6 @@ public class ProfessorDao implements IFuncoesCrud<Professor> {
 			DB.closeStatement(ps);
 		}
 		
-		
 	}
 
 	@Override
@@ -71,7 +72,7 @@ public class ProfessorDao implements IFuncoesCrud<Professor> {
 		PreparedStatement ps = null;
 		
 		try {
-			ps = conn.prepareStatement("DELETE FROM professor "
+			ps = conn.prepareStatement("DELETE FROM curso "
 					+ "WHERE id = ? "
 					+ "LIMIT 1");
 			
@@ -95,21 +96,25 @@ public class ProfessorDao implements IFuncoesCrud<Professor> {
 	}
 
 	@Override
-	public void atualizar(Professor professor) {
+	public void atualizar(Curso curso) {
 		
 		PreparedStatement ps = null;
 		
 		try {
-			ps = conn.prepareStatement("UPDATE professor "
-					+ "set codigoFuncional = ?, "
+			ps = conn.prepareStatement("UPDATE curso "
+					+ "set codigo = ?, "
 					+ "nome = ?, "
-					+ "dataNascimento = ? "
+					+ "descricao = ?, "
+					+ "dataInicio = ?, "
+					+ "dataEncerramentoPrevista = ? "
 					+ "WHERE id = ?");
 			
-			ps.setString(1, professor.getCodigoFuncional());
-			ps.setString(2, professor.getNome());
-			ps.setObject(3, professor.getDataNascimento());
-			ps.setInt(4, professor.getId());
+			ps.setString(1, curso.getCodigo());
+			ps.setString(2, curso.getNome());
+			ps.setString(3, curso.getDescricao());
+			ps.setObject(4, curso.getDataInicio());
+			ps.setObject(5, curso.getDataEncerramentoPrevista());
+			ps.setInt(6, curso.getId());
 			
 			ps.executeUpdate();
 		
@@ -124,23 +129,23 @@ public class ProfessorDao implements IFuncoesCrud<Professor> {
 	}
 
 	@Override
-	public Professor ler(Integer id) {
+	public Curso ler(Integer id) {
 		
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		
 		try {
-			ps = conn.prepareStatement("SELECT * FROM professor WHERE id = ?");
+			ps = conn.prepareStatement("SELECT * FROM curso WHERE id = ?");
 			
 			ps.setInt(1, id);
 			
 			rs = ps.executeQuery();
 			
 			if(rs.next()) {
-				Professor professor = instanciaProfessor(rs);
-				return professor;
+				Curso curso = instanciaCurso(rs);
+				return curso;
 			} else {
-				System.out.println("Professor com o id: " + id + " não existe.");
+				System.out.println("Curso com o id: " + id + " não existe.");
 				return null;
 			}
 			
@@ -156,21 +161,21 @@ public class ProfessorDao implements IFuncoesCrud<Professor> {
 	}
 
 	@Override
-	public List<Professor> lerTodos() {
+	public List<Curso> lerTodos() {
 		
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		
 		try {
-			ps = conn.prepareStatement("SELECT * FROM professor");
+			ps = conn.prepareStatement("SELECT * FROM curso");
 			
 			rs = ps.executeQuery();
 			
-			List<Professor> lista = new ArrayList<Professor>();
+			List<Curso> lista = new ArrayList<Curso>();
 			
 			while(rs.next()) {
-				Professor professor = instanciaProfessor(rs);
-				lista.add(professor);
+				Curso curso = instanciaCurso(rs);
+				lista.add(curso);
 			} 
 			
 			return lista;
@@ -184,15 +189,18 @@ public class ProfessorDao implements IFuncoesCrud<Professor> {
 		}
 		
 	}
-
-	private Professor instanciaProfessor(ResultSet rs) throws SQLException {
-		Professor professor = new Professor();
-		professor.setId(rs.getInt("id"));
-		professor.setCodigoFuncional(rs.getString("codigoFuncional"));
-		professor.setNome(rs.getString("nome"));
-		LocalDate data = rs.getDate("dataNascimento").toLocalDate();
-		professor.setDataNascimento(data);
-		return professor;
+	
+	private Curso instanciaCurso(ResultSet rs) throws SQLException {
+		Curso curso = new Curso();
+		curso.setId(rs.getInt("id"));
+		curso.setCodigo(rs.getString("codigo"));
+		curso.setNome(rs.getString("nome"));
+		curso.setDescricao(rs.getString("descricao"));
+		LocalDate dataInicio = rs.getDate("dataInicio").toLocalDate();
+		LocalDate dataEncerramentoPrevista = rs.getDate("dataEncerramentoPrevista").toLocalDate();
+		curso.setDataInicio(dataInicio);
+		curso.setDataEncerramentoPrevista(dataEncerramentoPrevista);
+		return curso;
 	}
 
 }
