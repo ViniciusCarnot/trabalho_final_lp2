@@ -56,6 +56,12 @@ public class Professor {
 		this.dataNascimento = dataNascimento;
 	}
 
+	@Override
+	public String toString() {
+		return "Professor [id=" + id + ", codigoFuncional=" + codigoFuncional + ", nome=" + nome + ", dataNascimento="
+				+ dataNascimento + "]";
+	}
+
 	public Set<Disciplina> getDisciplinas() {
 		return disciplinas;
 	}
