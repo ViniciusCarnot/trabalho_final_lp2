@@ -17,7 +17,7 @@ public class DB {
 	
 	private static Properties loadProperties() {
 		
-		try(FileInputStream fs = new FileInputStream("db.properties")){
+		try(FileInputStream fs = new FileInputStream("trabalho_final_lp2/db.properties")){
 			Properties props = new Properties();
 			props.load(fs);
 			return props;
