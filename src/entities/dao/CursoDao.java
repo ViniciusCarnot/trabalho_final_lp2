@@ -1,4 +1,4 @@
-package entities;
+package entities.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,6 +9,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import entities.Curso;
+import entities.DB;
+import entities.interfaces.IFuncoesCrud;
 import exceptions.DbExcessao;
 
 public class CursoDao implements IFuncoesCrud<Curso> {

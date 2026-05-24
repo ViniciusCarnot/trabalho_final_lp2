@@ -4,10 +4,15 @@ import java.time.LocalDate;
 import java.util.List;
 
 import entities.Curso;
-import entities.CursoDao;
-import entities.IFuncoesCrud;
+import entities.Disciplina;
 import entities.Professor;
-import entities.ProfessorDao;
+import entities.dao.CursoDao;
+import entities.dao.DisciplinaDao;
+import entities.dao.ProfessorDao;
+import entities.dto.DisciplinaDtoRequisicao;
+import entities.dto.DisciplinaDtoResposta;
+import entities.interfaces.IDisciplinaCrud;
+import entities.interfaces.IFuncoesCrud;
 
 public class Program {
 
@@ -99,6 +104,54 @@ public class Program {
 		IFuncoesCrud<Curso> op11 = new CursoDao();
 		op11.deletar(2);
 		*/
+		
+		/// TESTE: INSERIR DISCIPLINA
+		/*
+	    DisciplinaDtoRequisicao d1 = new DisciplinaDtoRequisicao(111, "Banco de Dados 1", 
+				LocalDate.of(2025, 7, 1), LocalDate.of(2025, 12, 1), null, "2M");
+	    
+	    DisciplinaDtoRequisicao d2 = new DisciplinaDtoRequisicao(222, "Arquitetura de Computadores", 
+				LocalDate.of(2025, 7, 1), LocalDate.of(2025, 12, 1), "1A2b3C4d5E6f7G", "2M");
+	    
+	    DisciplinaDtoRequisicao d3 = new DisciplinaDtoRequisicao(333, "Usinagem", 
+				LocalDate.of(2025, 7, 1), LocalDate.of(2025, 12, 1), "9z8y7x6w5v4u3t", "5k3j1h9");
+	    
+	    
+	    IDisciplinaCrud op12 = new DisciplinaDao();
+	    System.out.println(op12.inserir(d1));
+	    System.out.println(op12.inserir(d2));
+	    System.out.println(op12.inserir(d3));
+	    */
+		
+		/// TESTE: ATUALIZAR DISCIPLINA
+		/*
+		DisciplinaDtoRequisicao d4 = new DisciplinaDtoRequisicao(111, "Banco de Dados 1", 
+				LocalDate.of(2024, 7, 1), LocalDate.of(2024, 12, 1), null, "2M");
+		
+		IDisciplinaCrud op13 = new DisciplinaDao();
+		System.out.println(op13.atualizar(888, d4));
+		*/
+		
+		/// TESTE: LER DISCIPLINA
+		/*
+		IDisciplinaCrud op14 = new DisciplinaDao();
+		System.out.println(op14.ler(111));
+		*/
+		
+		/// TESTE: LER DISCIPLINAS
+		/*
+		IDisciplinaCrud op15 = new DisciplinaDao();
+		for(DisciplinaDtoResposta dtoResposta : op15.lerTodos()) {
+			System.out.println(dtoResposta);
+		}
+		*/
+		
+		/// TESTE: DELETAR DISCIPLINA
+		/*
+		IDisciplinaCrud op16 = new DisciplinaDao();
+		op16.deletar(333);
+		*/
+		
 	}
 
 }
