@@ -11,10 +11,14 @@ import java.util.List;
 
 import entities.DB;
 import entities.Professor;
+import entities.dto.ProfessorDtoRequisicao;
+import entities.dto.ProfessorDtoResposta;
 import entities.interfaces.IFuncoesCrud;
+import entities.interfaces.IProfessorCrud;
 import exceptions.DbExcessao;
+import exceptions.RecursoNaoEncontradoExcessao;
 
-public class ProfessorDao implements IFuncoesCrud<Professor> {
+public class ProfessorDao implements IProfessorCrud {
 	
 	private Connection conn;
 	
@@ -27,129 +31,104 @@ public class ProfessorDao implements IFuncoesCrud<Professor> {
 	}
 
 	@Override
-	public void inserir(Professor professor) {
-
+	public ProfessorDtoResposta inserir(ProfessorDtoRequisicao dtoRequisicao) {
+		
 		PreparedStatement ps = null;
 		
 		try {
 			ps = conn.prepareStatement("INSERT INTO professor "
-					+ "(codigoFuncional, nome, dataNascimento) "
-					+ "values "
-					+ "(?, ?, ?)" ,
-					Statement.RETURN_GENERATED_KEYS);
+					+ "(codigo, nome, dataNascimento) "
+					+ "VALUES "
+					+ "(?, ?, ?)");
 			
-			ps.setString(1, professor.getCodigoFuncional());
-			ps.setString(2, professor.getNome());
-			ps.setObject(3, professor.getDataNascimento());
+			ps.setString(1, dtoRequisicao.getCodigoFuncional());
+			ps.setString(2, dtoRequisicao.getNome());
+			ps.setObject(3, dtoRequisicao.getDataNasc());
 			
-			int rowsAffected = ps.executeUpdate();
+			int linhasAfetadas = ps.executeUpdate();
 			
-			if(rowsAffected > 0) {
-				
-				ResultSet rs = ps.getGeneratedKeys();
-				
-				if(rs.next()) {
-					
-					int id = rs.getInt(1);
-					professor.setId(id);
-				}
-				
-				DB.closeResultSet(rs);
-				
-			}
+			ProfessorDtoResposta dtoResposta;
 			
-		} catch (SQLException e) {
-			throw new DbExcessao("Erro inesperado! Nenhuma linha afetada. ");
-		}
-		finally {
-			DB.closeStatement(ps);
-		}
-		
-		
-	}
-
-	@Override
-	public void deletar(Integer id) {
-		
-		PreparedStatement ps = null;
-		
-		try {
-			ps = conn.prepareStatement("DELETE FROM professor "
-					+ "WHERE id = ? "
-					+ "LIMIT 1");
-			
-			ps.setInt(1, id);
-			
-			int rowsAffected = ps.executeUpdate();
-			
-			if(rowsAffected > 0) {
-				System.out.println("Linhas modificadas: " + rowsAffected);
+			if(linhasAfetadas > 0) {	
+				dtoResposta = ler(dtoRequisicao.getCodigoFuncional());
+				System.out.println("Professor adicionado com sucesso.");
 			} else {
-				throw new DbExcessao("Erro inesperado! Nenhuma linha modificada. ");
+				throw new DbExcessao("Erro inesperado! Nenhuma linha afetada.");
 			}
 			
+			return dtoResposta;
+			
 		} catch (SQLException e) {
-			throw new DbExcessao(e.getMessage());
-		} 
+			throw new DbExcessao("Erro ao inserir Professor: " + e.getMessage());
+		}
 		finally {
 			DB.closeStatement(ps);
 		}
 		
 	}
-
+	
 	@Override
-	public void atualizar(Professor professor) {
+	public ProfessorDtoResposta atualizar(String codigoAtual, ProfessorDtoRequisicao dtoRequisicao) {
 		
 		PreparedStatement ps = null;
 		
 		try {
-			ps = conn.prepareStatement("UPDATE professor "
-					+ "set codigoFuncional = ?, "
+			ps = conn.prepareStatement("UPDATE professor SET "
+					+ "codigo = ?, "
 					+ "nome = ?, "
-					+ "dataNascimento = ? "
-					+ "WHERE id = ?");
+					+ "dataNascimento = ?"
+					+ "WHERE codigo = ?");
 			
-			ps.setString(1, professor.getCodigoFuncional());
-			ps.setString(2, professor.getNome());
-			ps.setObject(3, professor.getDataNascimento());
-			ps.setInt(4, professor.getId());
+			ps.setString(1, dtoRequisicao.getCodigoFuncional());
+			ps.setString(2, dtoRequisicao.getNome());
+			ps.setObject(3, dtoRequisicao.getDataNasc());
+			ps.setString(4, codigoAtual);
 			
-			ps.executeUpdate();
+			int linhasAfetadas = ps.executeUpdate();
+			
+			ProfessorDtoResposta dtoResposta;
+			
+			if(linhasAfetadas > 0) {
+				dtoResposta = ler(dtoRequisicao.getCodigoFuncional());
+				System.out.println("Professor atualizado com sucesso.");
+			} else {
+				throw new DbExcessao("Erro inesperado. Nenhuma linha afetada.");
+			}
+			
+			return dtoResposta;
 		
 			
 		} catch (SQLException e) {
-			throw new DbExcessao(e.getMessage());
+			throw new DbExcessao("Erro ao atualizar Professor: " + e.getMessage());
 		}
 		finally {
 			DB.closeStatement(ps);
 		}
 		
 	}
-
+	
 	@Override
-	public Professor ler(Integer id) {
+	public ProfessorDtoResposta ler(String codigo) {
 		
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		
 		try {
-			ps = conn.prepareStatement("SELECT * FROM professor WHERE id = ?");
+			ps = conn.prepareStatement("SELECT * FROM professor WHERE codigoFuncional = ?");
 			
-			ps.setInt(1, id);
+			ps.setString(1, codigo);
 			
 			rs = ps.executeQuery();
 			
 			if(rs.next()) {
-				Professor professor = instanciaProfessor(rs);
-				return professor;
+				return instanciaProfessor(rs);
 			} else {
-				System.out.println("Professor com o id: " + id + " não existe.");
-				return null;
+				throw new RecursoNaoEncontradoExcessao("Professor com o código: " + codigo + ", não encontrado.");
 			}
 			
 			
 		} catch (SQLException e) {
-			throw new DbExcessao(e.getMessage());
+			throw new DbExcessao("Erro ao ler professor: " + e.getMessage());
 		}
 		finally {
 			DB.closeStatement(ps);
@@ -159,7 +138,7 @@ public class ProfessorDao implements IFuncoesCrud<Professor> {
 	}
 
 	@Override
-	public List<Professor> lerTodos() {
+	public List<ProfessorDtoResposta> lerTodos() {
 		
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -169,17 +148,16 @@ public class ProfessorDao implements IFuncoesCrud<Professor> {
 			
 			rs = ps.executeQuery();
 			
-			List<Professor> lista = new ArrayList<Professor>();
+			List<ProfessorDtoResposta> lista = new ArrayList<>();
 			
 			while(rs.next()) {
-				Professor professor = instanciaProfessor(rs);
-				lista.add(professor);
+				lista.add(instanciaProfessor(rs));
 			} 
 			
 			return lista;
 			
 		} catch (SQLException e) {
-			throw new DbExcessao(e.getMessage());
+			throw new DbExcessao("Erro ao ler professores: " + e.getMessage());
 		} 
 		finally {
 			DB.closeStatement(ps);
@@ -188,14 +166,42 @@ public class ProfessorDao implements IFuncoesCrud<Professor> {
 		
 	}
 
-	private Professor instanciaProfessor(ResultSet rs) throws SQLException {
-		Professor professor = new Professor();
-		professor.setId(rs.getInt("id"));
-		professor.setCodigoFuncional(rs.getString("codigoFuncional"));
-		professor.setNome(rs.getString("nome"));
-		LocalDate data = rs.getDate("dataNascimento").toLocalDate();
-		professor.setDataNascimento(data);
-		return professor;
+	@Override
+	public void deletar(String codigo) {
+		
+		PreparedStatement ps = null;
+		
+		try {
+			ps = conn.prepareStatement("DELETE FROM professor "
+					+ "WHERE codigoFuncional = ? "
+					+ "LIMIT 1");
+			
+			ps.setString(1, codigo);
+			
+			int linhasAfetadas = ps.executeUpdate();
+			
+			if(linhasAfetadas > 0) {
+				System.out.println("Linhas modificadas: " + linhasAfetadas + ".");
+				System.out.println("Professor de código: " + codigo + ", deletado com sucesso.");
+			} else {
+				throw new RecursoNaoEncontradoExcessao("Professor com o código: " + codigo + ", não encontrado.");
+			}
+			
+		} catch (SQLException e) {
+			throw new DbExcessao("Erro ao excluir professor: " + e.getMessage());
+		} 
+		finally {
+			DB.closeStatement(ps);
+		}
+		
+	}
+	
+	private ProfessorDtoResposta instanciaProfessor(ResultSet rs) throws SQLException {
+		ProfessorDtoResposta dtoResposta = new ProfessorDtoResposta();
+		dtoResposta.setCodigoFuncional(rs.getString("codigoFuncional"));
+		dtoResposta.setNome(rs.getString("nome"));
+		dtoResposta.setDataNasc(rs.getDate("dataNascimento").toLocalDate());
+		return dtoResposta;
 	}
 
 }
