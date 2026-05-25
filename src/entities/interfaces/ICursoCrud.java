@@ -2,15 +2,15 @@ package entities.interfaces;
 
 import java.util.List;
 
-import entities.Curso;
-import entities.dto.CursoDto;
+import entities.dto.CursoDtoRequisicao;
+import entities.dto.CursoDtoResposta;
 
 public interface ICursoCrud {
 
-	CursoDto inserir(Curso curso);
-	void deletar(Integer id);
-	CursoDto atualizar(Curso curso);
-	CursoDto ler(Integer id);
-	List<CursoDto> lerTodos();
+	CursoDtoResposta inserir(CursoDtoRequisicao dtoRequisicao);
+	void deletar(String codigo);
+	CursoDtoResposta atualizar(String codigo, CursoDtoRequisicao dtoRequisicao);
+	CursoDtoResposta ler(String codigo);
+	List<CursoDtoResposta> lerTodos();
 	
 }

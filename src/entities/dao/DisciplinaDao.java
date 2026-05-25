@@ -4,19 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import entities.Curso;
 import entities.DB;
-import entities.Disciplina;
-import entities.Professor;
 import entities.dto.DisciplinaDtoResposta;
 import entities.dto.DisciplinaDtoRequisicao;
 import entities.interfaces.IDisciplinaCrud;
-import entities.interfaces.IFuncoesCrud;
 import exceptions.DbExcessao;
 import exceptions.RecursoNaoEncontradoExcessao;
 
@@ -56,7 +50,7 @@ public class DisciplinaDao implements IDisciplinaCrud {
 			
 			if(linhasAfetadas > 0) {
 				dtoResposta = ler(dtoRequisicao.getNumero());
-				System.out.println("Disciplina inserida com sucesso.");
+				System.out.println("Disciplina adicionada com sucesso.");
 			} else {
 				throw new DbExcessao("Erro inesperado! Nenhuma linha afetada.");
 			}
@@ -64,7 +58,7 @@ public class DisciplinaDao implements IDisciplinaCrud {
 			return dtoResposta;
 			
 		} catch (SQLException e) {
-			throw new DbExcessao("Erro ao inserir disciplina: " + e.getMessage());
+			throw new DbExcessao("Erro ao adicionar disciplina: " + e.getMessage());
 		}
 		finally {
 			DB.closeStatement(ps);

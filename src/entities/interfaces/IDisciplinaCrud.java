@@ -2,9 +2,8 @@ package entities.interfaces;
 
 import java.util.List;
 
-import entities.Disciplina;
-import entities.dto.DisciplinaDtoResposta;
 import entities.dto.DisciplinaDtoRequisicao;
+import entities.dto.DisciplinaDtoResposta;
 
 public interface IDisciplinaCrud {
 	

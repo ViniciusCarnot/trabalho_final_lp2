@@ -2,34 +2,23 @@ package entities.dto;
 
 import java.time.LocalDate;
 
-public class CursoDto {
+public class CursoDtoResposta {
 	
-	private Integer id;
 	private String codigo;
 	private String nome;
 	private String descricao;
 	private LocalDate dataInicio;
 	private LocalDate dataEncerramentoPrevista;
 	
-	public CursoDto() {
+	public CursoDtoResposta() {
 	}
 
-	public CursoDto(Integer id, String codigo, String nome, String descricao, LocalDate dataInicio,
-			LocalDate dataEncerramentoPrevista) {
-		this.id = id;
+	public CursoDtoResposta(String codigo, String nome, String descricao, LocalDate dataInicio, LocalDate dataEncerramentoPrevista) {
 		this.codigo = codigo;
 		this.nome = nome;
 		this.descricao = descricao;
 		this.dataInicio = dataInicio;
 		this.dataEncerramentoPrevista = dataEncerramentoPrevista;
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
 	}
 
 	public String getCodigo() {
@@ -74,8 +63,20 @@ public class CursoDto {
 
 	@Override
 	public String toString() {
-		return "CursoDto [id=" + id + ", codigo=" + codigo + ", nome=" + nome + ", descricao=" + descricao
-				+ ", dataInicio=" + dataInicio + ", dataEncerramentoPrevista=" + dataEncerramentoPrevista + "]";
+		StringBuilder sb = new StringBuilder();
+		sb.append("CURSO").append("\n");
+		sb.append("Código: ").append(codigo).append("\n");
+		sb.append("Nome: ").append(nome).append("\n");
+		if(descricao == null) {
+			sb.append("Descrição: ").append("").append("\n");
+		} else {
+			sb.append("Descrição: ").append(descricao).append("\n");
+		}
+		sb.append("Data de Ínicio: ").append(dataInicio).append("\n");
+		sb.append("Data de Encerramento Prevista: ").append(dataEncerramentoPrevista).append("\n");
+		return sb.toString();
 	}
 	
+	
+
 }

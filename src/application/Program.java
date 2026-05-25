@@ -9,8 +9,11 @@ import entities.Professor;
 import entities.dao.CursoDao;
 import entities.dao.DisciplinaDao;
 import entities.dao.ProfessorDao;
+import entities.dto.CursoDtoRequisicao;
+import entities.dto.CursoDtoResposta;
 import entities.dto.DisciplinaDtoRequisicao;
 import entities.dto.DisciplinaDtoResposta;
+import entities.interfaces.ICursoCrud;
 import entities.interfaces.IDisciplinaCrud;
 import entities.interfaces.IFuncoesCrud;
 
@@ -67,42 +70,49 @@ public class Program {
 		
 		/// TESTE: INSERIR CURSO
 		/*
-		Curso c1 = new Curso(null, "PCENGCOMP", "Engenharia da Computação", "...", LocalDate.of(2024,  2, 1), 
+		CursoDtoRequisicao c1 = new CursoDtoRequisicao("ENGCOMP", "Engenharia da Computação", null, LocalDate.of(2024,  2, 1), 
+				LocalDate.of(2027, 12, 1));
+		
+		CursoDtoRequisicao c2 = new CursoDtoRequisicao("ENGMEC", "Engenharia Mecânica", 
+				"Curso destinado a montagem e manutenção de peças.", LocalDate.of(2024,  2, 1), 
 				LocalDate.of(2027, 12, 1));
 				
-		IFuncoesCrud<Curso> op7 = new CursoDao();
-		op7.inserir(c1);
+		ICursoCrud op7 = new CursoDao();
+		System.out.println(op7.inserir(c1));
+		System.out.println(op7.inserir(c2));
 		*/
 		
 		/// TESTE: ATUALIZAR CURSO
 		/*
-		Curso c2 = new Curso(1, "PCENGMEC", "Engenharia Mecânica", "Curso destinado a montagem e manutenção de peças.", 
-				LocalDate.of(2024,  2, 1), LocalDate.of(2027, 12, 1));
+		CursoDtoRequisicao c3 = new CursoDtoRequisicao("ENGELET", "Engenharia Elétrica", 
+				"Curso destinado a montagem e manutenção de circuitos elétricos.", LocalDate.of(2025,  2, 1), 
+				LocalDate.of(2028, 12, 1));
 		
-		IFuncoesCrud<Curso> op8 = new CursoDao();
-		op8.atualizar(c2);
+		ICursoCrud op8 = new CursoDao();
+		System.out.println(op8.atualizar("ENGELET", c3));
 		*/
 		
 		/// TESTE: LER CURSO
 		/*
-		IFuncoesCrud<Curso> op9 = new CursoDao();
-		System.out.println(op9.ler(1));
+		ICursoCrud op9 = new CursoDao();
+		System.out.println(op9.ler("ENGCOMP"));
+		System.out.println(op9.ler("ENGELET"));
 		*/
 		
 		/// TESTE: LER CURSOS
 		/*
-		IFuncoesCrud<Curso> op10 = new CursoDao();
+		ICursoCrud op10 = new CursoDao();
 		
-		List<Curso> lista = op10.lerTodos();
-		for(Curso curso : lista) {
-			System.out.println(curso);
+		List<CursoDtoResposta> lista = op10.lerTodos();
+		for(CursoDtoResposta dtoResposta : lista) {
+			System.out.println(dtoResposta);
 		}
 		*/
 		
 		/// TESTE: DELETAR CURSO
 		/*
-		IFuncoesCrud<Curso> op11 = new CursoDao();
-		op11.deletar(2);
+		ICursoCrud op11 = new CursoDao();
+		op11.deletar("engmec");
 		*/
 		
 		/// TESTE: INSERIR DISCIPLINA
