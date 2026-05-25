@@ -4,17 +4,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import entities.Curso;
 import entities.DB;
-import entities.interfaces.IFuncoesCrud;
+import entities.dto.CursoDtoRequisicao;
+import entities.dto.CursoDtoResposta;
+import entities.interfaces.ICursoCrud;
 import exceptions.DbExcessao;
+import exceptions.RecursoNaoEncontradoExcessao;
 
-public class CursoDao implements IFuncoesCrud<Curso> {
+public class CursoDao implements ICursoCrud {
 	
 	private Connection conn;
 	
@@ -27,134 +27,110 @@ public class CursoDao implements IFuncoesCrud<Curso> {
 	}
 
 	@Override
-	public void inserir(Curso curso) {
+	public CursoDtoResposta inserir(CursoDtoRequisicao dtoRequisicao) {
 		
 		PreparedStatement ps = null;
 		
 		try {
 			ps = conn.prepareStatement("INSERT INTO curso "
 					+ "(codigo, nome, descricao, dataInicio, dataEncerramentoPrevista) "
-					+ "values "
-					+ "(?, ?, ?, ?, ?)" ,
-					Statement.RETURN_GENERATED_KEYS);
+					+ "VALUES "
+					+ "(?, ?, ?, ?, ?)");
 			
-			ps.setString(1, curso.getCodigo());
-			ps.setString(2, curso.getNome());
-			ps.setString(3, curso.getDescricao());
-			ps.setObject(4, curso.getDataInicio());
-			ps.setObject(5, curso.getDataEncerramentoPrevista());
+			ps.setString(1, dtoRequisicao.getCodigo());
+			ps.setString(2, dtoRequisicao.getNome());
+			ps.setString(3, dtoRequisicao.getDescricao());
+			ps.setObject(4, dtoRequisicao.getDataInicio());
+			ps.setObject(5, dtoRequisicao.getDataEncerramentoPrevista());
 			
-			int rowsAffected = ps.executeUpdate();
+			int linhasAfetadas = ps.executeUpdate();
 			
-			if(rowsAffected > 0) {
-				
-				ResultSet rs = ps.getGeneratedKeys();
-				
-				if(rs.next()) {
-					
-					int id = rs.getInt(1);
-					curso.setId(id);
-				}
-				
-				DB.closeResultSet(rs);
-				
-			}
+			CursoDtoResposta dtoResposta;
 			
-		} catch (SQLException e) {
-			throw new DbExcessao("Erro inesperado! Nenhuma linha afetada. ");
-		}
-		finally {
-			DB.closeStatement(ps);
-		}
-		
-	}
-
-	@Override
-	public void deletar(Integer id) {
-		
-		PreparedStatement ps = null;
-		
-		try {
-			ps = conn.prepareStatement("DELETE FROM curso "
-					+ "WHERE id = ? "
-					+ "LIMIT 1");
-			
-			ps.setInt(1, id);
-			
-			int rowsAffected = ps.executeUpdate();
-			
-			if(rowsAffected > 0) {
-				System.out.println("Linhas modificadas: " + rowsAffected);
+			if(linhasAfetadas > 0) {	
+				dtoResposta = ler(dtoRequisicao.getCodigo());
+				System.out.println("Curso adicionado com sucesso.");
 			} else {
-				throw new DbExcessao("Erro inesperado! Nenhuma linha modificada. ");
+				throw new DbExcessao("Erro inesperado! Nenhuma linha afetada.");
 			}
 			
+			return dtoResposta;
+			
 		} catch (SQLException e) {
-			throw new DbExcessao(e.getMessage());
-		} 
+			throw new DbExcessao("Erro ao inserir curso: " + e.getMessage());
+		}
 		finally {
 			DB.closeStatement(ps);
 		}
 		
 	}
-
+	
 	@Override
-	public void atualizar(Curso curso) {
+	public CursoDtoResposta atualizar(String codigoAtual, CursoDtoRequisicao dtoRequisicao) {
 		
 		PreparedStatement ps = null;
 		
 		try {
-			ps = conn.prepareStatement("UPDATE curso "
-					+ "set codigo = ?, "
+			ps = conn.prepareStatement("UPDATE curso SET "
+					+ "codigo = ?, "
 					+ "nome = ?, "
 					+ "descricao = ?, "
 					+ "dataInicio = ?, "
 					+ "dataEncerramentoPrevista = ? "
-					+ "WHERE id = ?");
+					+ "WHERE codigo = ?");
 			
-			ps.setString(1, curso.getCodigo());
-			ps.setString(2, curso.getNome());
-			ps.setString(3, curso.getDescricao());
-			ps.setObject(4, curso.getDataInicio());
-			ps.setObject(5, curso.getDataEncerramentoPrevista());
-			ps.setInt(6, curso.getId());
+			ps.setString(1, dtoRequisicao.getCodigo());
+			ps.setString(2, dtoRequisicao.getNome());
+			ps.setString(3, dtoRequisicao.getDescricao());
+			ps.setObject(4, dtoRequisicao.getDataInicio());
+			ps.setObject(5, dtoRequisicao.getDataEncerramentoPrevista());
+			ps.setString(6, codigoAtual);
 			
-			ps.executeUpdate();
+			int linhasAfetadas = ps.executeUpdate();
+			
+			CursoDtoResposta dtoResposta;
+			
+			if(linhasAfetadas > 0) {
+				dtoResposta = ler(dtoRequisicao.getCodigo());
+				System.out.println("Curso atualizado com sucesso.");
+			} else {
+				throw new DbExcessao("Erro inesperado. Nenhuma linha afetada.");
+			}
+			
+			return dtoResposta;
 		
 			
 		} catch (SQLException e) {
-			throw new DbExcessao(e.getMessage());
+			throw new DbExcessao("Erro ao atualizar curso: " + e.getMessage());
 		}
 		finally {
 			DB.closeStatement(ps);
 		}
 		
 	}
-
+	
 	@Override
-	public Curso ler(Integer id) {
+	public CursoDtoResposta ler(String codigo) {
 		
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		
 		try {
-			ps = conn.prepareStatement("SELECT * FROM curso WHERE id = ?");
+			ps = conn.prepareStatement("SELECT * FROM curso WHERE codigo = ?");
 			
-			ps.setInt(1, id);
+			ps.setString(1, codigo);
 			
 			rs = ps.executeQuery();
 			
 			if(rs.next()) {
-				Curso curso = instanciaCurso(rs);
-				return curso;
+				return instanciaCursoDtoResposta(rs);
 			} else {
-				System.out.println("Curso com o id: " + id + " não existe.");
-				return null;
+				throw new RecursoNaoEncontradoExcessao("Curso com o código: " + codigo + ", não encontrado.");
 			}
 			
 			
 		} catch (SQLException e) {
-			throw new DbExcessao(e.getMessage());
+			throw new DbExcessao("Erro ao ler curso: " + e.getMessage());
 		}
 		finally {
 			DB.closeStatement(ps);
@@ -164,7 +140,7 @@ public class CursoDao implements IFuncoesCrud<Curso> {
 	}
 
 	@Override
-	public List<Curso> lerTodos() {
+	public List<CursoDtoResposta> lerTodos() {
 		
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -174,17 +150,16 @@ public class CursoDao implements IFuncoesCrud<Curso> {
 			
 			rs = ps.executeQuery();
 			
-			List<Curso> lista = new ArrayList<Curso>();
+			List<CursoDtoResposta> lista = new ArrayList<>();
 			
 			while(rs.next()) {
-				Curso curso = instanciaCurso(rs);
-				lista.add(curso);
+				lista.add(instanciaCursoDtoResposta(rs));
 			} 
 			
 			return lista;
 			
 		} catch (SQLException e) {
-			throw new DbExcessao(e.getMessage());
+			throw new DbExcessao("Erro ao ler cursos: " + e.getMessage());
 		} 
 		finally {
 			DB.closeStatement(ps);
@@ -192,18 +167,45 @@ public class CursoDao implements IFuncoesCrud<Curso> {
 		}
 		
 	}
+
+	@Override
+	public void deletar(String codigo) {
+		
+		PreparedStatement ps = null;
+		
+		try {
+			ps = conn.prepareStatement("DELETE FROM curso "
+					+ "WHERE codigo = ? "
+					+ "LIMIT 1");
+			
+			ps.setString(1, codigo);
+			
+			int linhasAfetadas = ps.executeUpdate();
+			
+			if(linhasAfetadas > 0) {
+				System.out.println("Linhas modificadas: " + linhasAfetadas + ".");
+				System.out.println("Curso de código: " + codigo + ", deletado com sucesso.");
+			} else {
+				throw new RecursoNaoEncontradoExcessao("Curso com o código: " + codigo + ", não encontrado.");
+			}
+			
+		} catch (SQLException e) {
+			throw new DbExcessao("Erro ao excluir curso: " + e.getMessage());
+		} 
+		finally {
+			DB.closeStatement(ps);
+		}
+		
+	}
 	
-	private Curso instanciaCurso(ResultSet rs) throws SQLException {
-		Curso curso = new Curso();
-		curso.setId(rs.getInt("id"));
-		curso.setCodigo(rs.getString("codigo"));
-		curso.setNome(rs.getString("nome"));
-		curso.setDescricao(rs.getString("descricao"));
-		LocalDate dataInicio = rs.getDate("dataInicio").toLocalDate();
-		LocalDate dataEncerramentoPrevista = rs.getDate("dataEncerramentoPrevista").toLocalDate();
-		curso.setDataInicio(dataInicio);
-		curso.setDataEncerramentoPrevista(dataEncerramentoPrevista);
-		return curso;
+	private CursoDtoResposta instanciaCursoDtoResposta(ResultSet rs) throws SQLException {
+		CursoDtoResposta dtoResposta = new CursoDtoResposta();
+		dtoResposta.setCodigo(rs.getString("codigo"));
+		dtoResposta.setNome(rs.getString("nome"));
+		dtoResposta.setDescricao(rs.getString("descricao"));
+		dtoResposta.setDataInicio(rs.getDate("dataInicio").toLocalDate());
+		dtoResposta.setDataEncerramentoPrevista(rs.getDate("dataEncerramentoPrevista").toLocalDate());
+		return dtoResposta;
 	}
 
 }
