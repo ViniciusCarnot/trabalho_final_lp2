@@ -4,16 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import entities.DB;
-import entities.Professor;
 import entities.dto.ProfessorDtoRequisicao;
 import entities.dto.ProfessorDtoResposta;
-import entities.interfaces.IFuncoesCrud;
 import entities.interfaces.IProfessorCrud;
 import exceptions.DbExcessao;
 import exceptions.RecursoNaoEncontradoExcessao;
@@ -37,7 +33,7 @@ public class ProfessorDao implements IProfessorCrud {
 		
 		try {
 			ps = conn.prepareStatement("INSERT INTO professor "
-					+ "(codigo, nome, dataNascimento) "
+					+ "(codigoFuncional, nome, dataNascimento) "
 					+ "VALUES "
 					+ "(?, ?, ?)");
 			
@@ -74,10 +70,10 @@ public class ProfessorDao implements IProfessorCrud {
 		
 		try {
 			ps = conn.prepareStatement("UPDATE professor SET "
-					+ "codigo = ?, "
+					+ "codigoFuncional = ?, "
 					+ "nome = ?, "
 					+ "dataNascimento = ?"
-					+ "WHERE codigo = ?");
+					+ "WHERE codigoFuncional = ?");
 			
 			ps.setString(1, dtoRequisicao.getCodigoFuncional());
 			ps.setString(2, dtoRequisicao.getNome());

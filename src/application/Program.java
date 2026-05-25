@@ -1,71 +1,45 @@
 package application;
 
-import java.time.LocalDate;
-import java.util.List;
-
-import entities.Curso;
-import entities.Disciplina;
-import entities.Professor;
-import entities.dao.CursoDao;
-import entities.dao.DisciplinaDao;
-import entities.dao.ProfessorDao;
-import entities.dto.CursoDtoRequisicao;
-import entities.dto.CursoDtoResposta;
-import entities.dto.DisciplinaDtoRequisicao;
-import entities.dto.DisciplinaDtoResposta;
-import entities.interfaces.ICursoCrud;
-import entities.interfaces.IDisciplinaCrud;
-import entities.interfaces.IFuncoesCrud;
-
 public class Program {
 
 	public static void main(String[] args) {
 		
 		/// TESTE: INSERIR PROFESSOR
 		/*
-		Professor p1 = new Professor(null, "PCP111", "Alberto Alves", LocalDate.of(1980, 1, 1));
+		ProfessorDtoRequisicao p1 = new ProfessorDtoRequisicao("PCP111", "Guilherme Seyos", LocalDate.of(1980, 1, 1));
 		
-		IFuncoesCrud<Professor> op1 = new ProfessorDao();
-		op1.inserir(p1);
-		 */
+		IProfessorCrud op1 = new ProfessorDao();
+		System.out.println(op1.inserir(p1));
+		*/ 
 
 		/// TESTE: ATUALIZAR PROFESSOR
 		/*
-		Professor p2 = new Professor(1, "PCP222", "Bruno Bisca", LocalDate.of(1981, 1, 1));
+		ProfessorDtoRequisicao p2 = new ProfessorDtoRequisicao("PCP777", "Guilherme Pintos", LocalDate.of(1980, 1, 1));
 		
-		IFuncoesCrud<Professor> op2 = new ProfessorDao();
-
-		op2.atualizar(p2);
+		IProfessorCrud op2 = new ProfessorDao();
+		System.out.println(op2.atualizar("PCP222", p2));
 		*/
 
 		/// TESTE: LER PROFESSOR
 		/*
-		IFuncoesCrud<Professor> op3 = new ProfessorDao();
-
-		Professor p3 = op3.ler(1);
-		System.out.println(p3);
+		IProfessorCrud op3 = new ProfessorDao();
+		System.out.println(op3.ler("PCP777"));
 		*/
 
 		/// TESTE: LER PROFESSORES
 		/*
-		Professor p4 = new Professor(null, "PCP333", "Liminha", LocalDate.of(1982, 9, 5));
+		IProfessorCrud op4 = new ProfessorDao();
 
-		IFuncoesCrud<Professor> op4 = new ProfessorDao();
-		op4.inserir(p4);
-		*/
-
-		/*
-		IFuncoesCrud<Professor> op5 = new ProfessorDao();
-		List<Professor> lp = op5.lerTodos();
-		for(Professor p : lp){
-			System.out.println(p);
+		List<ProfessorDtoResposta> lista = op4.lerTodos();
+		for(ProfessorDtoResposta dto : lista) {
+			System.out.println(dto);
 		}
 		*/
 
 		/// TESTE: DELETAR PROFESSOR
 		/*
-		IFuncoesCrud<Professor> op6 = new ProfessorDao();
-		op6.deletar(1); 
+		IProfessorCrud op6 = new ProfessorDao();
+		op6.deletar("PCP111"); 
 		*/
 		
 		/// TESTE: INSERIR CURSO
@@ -118,13 +92,13 @@ public class Program {
 		/// TESTE: INSERIR DISCIPLINA
 		/*
 	    DisciplinaDtoRequisicao d1 = new DisciplinaDtoRequisicao(111, "Banco de Dados 1", 
-				LocalDate.of(2025, 7, 1), LocalDate.of(2025, 12, 1), null, "2M");
+				LocalDate.of(2025, 7, 1), LocalDate.of(2025, 12, 1), null, "ENGCOMP");
 	    
 	    DisciplinaDtoRequisicao d2 = new DisciplinaDtoRequisicao(222, "Arquitetura de Computadores", 
-				LocalDate.of(2025, 7, 1), LocalDate.of(2025, 12, 1), "1A2b3C4d5E6f7G", "2M");
+				LocalDate.of(2025, 7, 1), LocalDate.of(2025, 12, 1), "1A2b3C4d5E6f7G", "ENGCOMP");
 	    
 	    DisciplinaDtoRequisicao d3 = new DisciplinaDtoRequisicao(333, "Usinagem", 
-				LocalDate.of(2025, 7, 1), LocalDate.of(2025, 12, 1), "9z8y7x6w5v4u3t", "5k3j1h9");
+				LocalDate.of(2025, 7, 1), LocalDate.of(2025, 12, 1), "7H2j9K4m1P8q3N", "ENGELET");
 	    
 	    
 	    IDisciplinaCrud op12 = new DisciplinaDao();

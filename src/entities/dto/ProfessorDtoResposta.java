@@ -38,4 +38,12 @@ private String codigoFuncional;
     public void setDataNasc(LocalDate dataNasc) {
         this.dataNasc = dataNasc;
     }
+
+	@Override
+	public String toString() {
+		return "ProfessorDtoResposta [codigoFuncional=" + codigoFuncional + ", nome=" + nome + ", dataNasc=" + dataNasc
+				+ "]";
+	}
+    
+    
 }
